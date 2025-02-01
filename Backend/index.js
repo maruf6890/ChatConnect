@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.routes.js";
 import chatRoute from "./routes/chatroom.routes.js";
+import upload from "./routes/upload.routes.js"
 import { Server } from "socket.io";
 import Message from "./models/message.models.js";
 import http from "http";
@@ -43,11 +44,12 @@ io.on("connection", (socket) => {
   });
 
   // Handle sending messages
-  socket.on("sendMessage", async ({ roomId, message, senderId, type }) => {
+  socket.on("sendMessage", async ({ roomId,image, message, senderId, type }) => {
     try {
+      
       const savedMessage = await Message.create({
         chatRoom: roomId,
-        content: message,
+        content: image || message,
         sender: senderId,
         messageType: type,
       });
@@ -76,11 +78,15 @@ connectDB();
 // Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chatroom", chatRoute);
+app.use("/api/v1/", upload);
 
 // Test API
 app.get("/", (req, res) => {
   res.send("Welcome to the Book Sharing Service API!");
 });
+
+//
+
 
 // Start server
 server.listen(PORT, () => {
