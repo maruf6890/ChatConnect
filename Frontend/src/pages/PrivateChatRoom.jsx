@@ -8,6 +8,7 @@ import { io } from "socket.io-client";
 import AuthContext from "../Components/AuthProvider";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import { styled } from "@mui/material/styles";
+import { decryptData, encryptData } from "./Utils/Encription";
 
 // Initialize Socket.IO
 const socket = io("http://localhost:3000", { autoConnect: false });
@@ -106,13 +107,14 @@ export default function PrivateChatRoom() {
 
       const imageUrl = response.data.imageUrl;
 
-      console.log("Image URL:", imageUrl);
+     
       // Send image message
-      
+      const encrptedMessage = encryptData(imageUrl); //todo delete testing
+     
       socket.emit("sendMessage", {
         roomId,
         senderId: currentUser._id,
-        image: imageUrl,
+        image: encrptedMessage,
         type: "image",
       });
 
@@ -126,10 +128,14 @@ export default function PrivateChatRoom() {
 
   // Send Text Message
   const sendMessage = () => {
+    
+    const encrptedMessage = encryptData(message);
+
+  
     if (message.trim()) {
       const newMessage = {
         roomId,
-        message,
+        message:encrptedMessage,
         senderId: currentUser._id,
         type: "text",
       };
@@ -163,10 +169,11 @@ export default function PrivateChatRoom() {
               </Typography>
 
               {msg.messageType === "image" ? (
-                <img src={msg.content} alt="Uploaded" className="rounded-lg max-w-xs mt-2" />
+                <img src={decryptData(msg.content)} alt="Uploaded" className="rounded-lg max-w-xs mt-2" />
               ) : (
-                <Typography variant="body1">{msg.content}</Typography>
+                <Typography variant="body1">{decryptData(msg.content)}</Typography>
               )}
+              
             </div>
           </div>
         ))}
