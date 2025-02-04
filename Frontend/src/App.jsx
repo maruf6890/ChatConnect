@@ -13,7 +13,7 @@ import axios from 'axios';
 function App() {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  if(!currentUser) navigate('/login');
   const handleLogout = async () => {
     try {
       await axios.post("http://localhost:3000/api/v1/user/logout", {}, { withCredentials: true });

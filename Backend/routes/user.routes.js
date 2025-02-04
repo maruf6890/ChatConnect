@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createUser,
   getAllUsers,
-  getUserById,
+
   loginUser,
   logoutUser,
   updateUserById,
@@ -10,6 +10,11 @@ import {
   getCurrentuser,
   searchUser,
   addFriend,
+  unfriend,
+  blockUser,
+  unBlockUser,
+  updateAvatar,
+  updateProfile,
  
 } from "../controllers/user.controller.js";
 import { verifyAuth } from "../Middlewares/auth.middlewares.js";
@@ -26,6 +31,12 @@ router.get('/all',verifyAuth, getAllUsers);
 router.post('/add',verifyAuth, addFriend);
 router.get('/current-user', verifyAuth, getCurrentuser);
 router.get('/search', searchUser);
+router.post('/remove',verifyAuth, unfriend);
+router.post('/block',verifyAuth, blockUser);
+router.post('/unblock',verifyAuth, unBlockUser);
+router.post('/update-avatar',verifyAuth, updateAvatar);
+router.patch('/update-profile',verifyAuth, updateProfile);
+
 // Route to get a single user by ID
 //router.get('/:userId',verifyAuth, getUserById);
 

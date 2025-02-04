@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: [true, "Email already exists"], // Custom error message for email
-      lowercase: true, // Automatically convert email to lowercase
+      lowercase: true,
       match: [/\S+@\S+\.\S+/, "Please enter a valid email"], // Regex for email format validation
     },
     password: {

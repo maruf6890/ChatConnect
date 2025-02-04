@@ -10,6 +10,9 @@ import { AuthProvider } from './Components/AuthProvider';
 import NewChat from './pages/NewChat';
 import ChatHomePage from './pages/ChatHomePage';
 import PrivateChatRoom from './pages/PrivateChatRoom';
+import Profile from './pages/Profile';
+import FriendList from './pages/Friendlist';
+import BlockList from './pages/BlockList';
 
 const root = document.getElementById("root");
 
@@ -28,7 +31,10 @@ ReactDOM.createRoot(root).render(
     <Route path="/app" element={<App />}>
       <Route index element={<ChatHomePage />} /> {/* Default Outlet */}
       <Route path="/app/new-chat" element={<NewChat />} /> {/* Nested Route */}
-      <Route path="/app/private-chat/:roomId" element={<PrivateChatRoom />} /> {/* Nested Route */}
+      <Route path="/app/profile" element={<Profile/>} />
+      <Route path="/app/friend-list" element={<FriendList/>} />
+      <Route path="/app/block-list" element={<BlockList></BlockList>} />
+      <Route path="/app/private-chat/:roomId" element={<PrivateChatRoom />} /> {/* Nested Route */}  
     </Route>
   </Routes>
 </BrowserRouter>
