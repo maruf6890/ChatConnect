@@ -18,7 +18,7 @@ const navigate=useNavigate();
   // Function to update currentUser profile
   const updateProfile = async (updatedData) => {
     try {
-      const res=await axios.patch("http://localhost:3000/api/v1/user/update-profile",updatedData,{withCredentials:true});
+      const res=await axios.patch(`${import.meta.env.VITE_API_BASE_URL}user/update-profile`,updatedData,{withCredentials:true});
       console.log(res.data);
      
     } catch (error) {
@@ -36,14 +36,14 @@ const navigate=useNavigate();
     formData.append("image", file);
 
     try {
-        const uploadResponse = await axios.post("http://localhost:3000/api/v1/upload", formData, {
+        const uploadResponse = await axios.post(`${import.meta.env.VITE_API_BASE_URL}upload`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
 
         if (uploadResponse && uploadResponse.data) {
             try {
                 const updateResponse = await axios.post(
-                    "http://localhost:3000/api/v1/user/update-avatar",
+                    `${import.meta.env.VITE_API_BASE_URL}user/update-avatar`,
                     { avatar: uploadResponse.data.imageUrl },
                     { withCredentials: true }
                 );

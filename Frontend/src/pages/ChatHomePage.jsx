@@ -7,7 +7,7 @@ const ChatHomePage = () => {
       <div className="text-center p-6 ">
         {/* Logo/Icon */}
         <div className="flex justify-center mb-4">
-          <ChatIcon style={{ fontSize: "4rem", color: "#007BFF" }} /> {/* Bluish Icon */}
+          <ChatIcon style={{ fontSize: "4rem", color: "#007BFF" }} /> 
         </div>
 
         {/* Title */}

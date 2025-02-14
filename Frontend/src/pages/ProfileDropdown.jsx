@@ -22,7 +22,7 @@ const ProfileDropdown = ({ other, user }) => {
             // Unfriend
             const updateUser = async () => {
                 try {
-                    const res = await axios.post(`http://localhost:3000/api/v1/user/remove`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
+                    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/remove`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
                     alert(res.data.message);
                     setIsFriend(!isFriend);
                 } catch (error) {
@@ -39,7 +39,7 @@ const ProfileDropdown = ({ other, user }) => {
             // Add friend
             const updateUser = async () => {
                 try {
-                    const res = await axios.post(`http://localhost:3000/api/v1/user/add`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
+                    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/add`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
                     alert(res.data.message);
                     setIsFriend(!isFriend);
                 } catch (error) {
@@ -61,7 +61,7 @@ const ProfileDropdown = ({ other, user }) => {
             let res;
             if (isBlocked) {
                 // Unblock user
-                res = await axios.post(`http://localhost:3000/api/v1/user/unblock`, {
+                res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/unblock`, {
                     userId: currentUser?._id,
                     unBlockedUserId: other?._id
                 }, { withCredentials: true });
@@ -70,7 +70,7 @@ const ProfileDropdown = ({ other, user }) => {
                 currentUser.blockedUsers = currentUser.blockedUsers.filter(id => id !== other?._id);
             } else {
                 // Block user
-                res = await axios.post(`http://localhost:3000/api/v1/user/block`, {
+                res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/block`, {
                     userId: currentUser?._id,
                     blockedUserId: other?._id
                 }, { withCredentials: true });

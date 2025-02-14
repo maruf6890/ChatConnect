@@ -1,61 +1,57 @@
 import React from "react";
 import { Link } from "react-router";
-import { Button,Typography,Box } from "@mui/material";
+import { Button,Typography,Box,AppBar,Toolbar } from "@mui/material";
 import "tailwindcss/tailwind.css";
 
 
 const WelcomePage = () => {
-  console.log(import.meta.env.VITE_API_BASE_URL);
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Header */}
-      <header className="bg-white py-4 px-8 shadow-md">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Typography variant="h5" className="font-bold text-gray-800">
-            ChatConnect
+      <AppBar position="static"  sx={{ backgroundColor: "#fff", boxShadow: "none" }}  className="shadow-md">
+        <Toolbar className="max-w-7xl mx-auto flex justify-between w-full">
+          <Typography variant="h4" className="font-bold text-blue-500">
+            Chat<b className="text-blue-600">Connect</b>
+           
           </Typography>
-        </div>
-      </header>
+          <Link to="/registration" className="text-blue-600 font-semibold hover:underline">
+            Sign Up
+          </Link>
+        </Toolbar>
+      </AppBar>
 
       {/* Hero Section */}
-      <div className="flex-grow flex items-center justify-center">
-        <Box className="w-full max-w-lg p-10 bg-white rounded-xl shadow-2xl text-center">
-          <Typography variant="h3" className="text-gray-800 font-extrabold text-4xl mb-4">
-            Welcome to ChatConnect
+      <div className="flex-grow flex flex-col-reverse md:flex-row items-center justify-center px-6 py-10 md:py-20">
+      <Box className="max-w-2xl text-start p-20">
+          <Typography variant="h4" className="text-gray-900 font-extrabold text-3xl md:text-5xl mb-6">
+            Start chatting with your connects, anytime, anywhere with ChatConnect
           </Typography>
           <Typography variant="body1" className="text-gray-600 text-lg mb-8">
-            A place to connect, chat, and share moments with your friends and the world.
+            Great software that allows you to chat from any place at any time without any interruption.
           </Typography>
-          <div className="w-full space-y-4">
-            {/* Log In Button */}
-            <Link
-              to="/login"
-              className="block w-full py-3 text-lg font-semibold rounded-lg bg-blue-600 text-white text-center transition-all duration-300 transform hover:bg-blue-700 hover:scale-105"
-            >
-              Log In
-            </Link>
-            
-            {/* Sign Up Button */}
-            <Link
-              to="/registration"
-              className="block w-full py-3 text-lg font-semibold rounded-lg border-2 border-blue-600 text-blue-600 text-center transition-all duration-300 transform hover:bg-blue-100 hover:scale-105"
-            >
-              Sign Up
-            </Link>
-          </div>
+          <Link to="/login">
+            <Button 
+              variant="contained" 
+              sx={{ backgroundColor:"none", color: "#fff",marginTop:"10px", padding: "12px 24px", fontSize: "1.2rem", borderRadius: "8px" }}
+              className="flex items-center  bg-blue-500 space-x-2 shadow-md transition-all duration-300 transform hover:scale-105">
+              Start Chatting Now →
+            </Button>
+          </Link>
+        </Box>
+        <Box className="w-full md:w-1/2 flex justify-center">
+          <img src="./chat.png" className="w-64 md:w-96" alt="Chat Illustration" />
         </Box>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <Typography variant="body2" className="text-gray-400">
-            © 2025 ChatConnect. All rights reserved.
-          </Typography>
-        </div>
+      <footer className="bg-white text-white py-4 text-center">
+        <Typography variant="body2" className="text-gray-400">
+          © 2025 ChatConnect. All rights reserved.
+        </Typography>
       </footer>
     </div>
   );
 };
 
 export default WelcomePage;
+

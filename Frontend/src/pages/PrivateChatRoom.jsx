@@ -13,7 +13,7 @@ import { decryptData, encryptData } from "./Utils/Encription";
 import ProfileDropdown from "./ProfileDropdown";
 
 // Initialize Socket.IO
-const socket = io("http://localhost:3000", { autoConnect: false });
+const socket = io(`${import.meta.env.VITE_BACKEND}`, { autoConnect: false });
 
 export default function PrivateChatRoom() {
   const { roomId } = useParams();
@@ -45,7 +45,7 @@ export default function PrivateChatRoom() {
   useEffect(() => {
     const joinRoom = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/v1/chatroom/${roomId}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}chatroom/${roomId}`);
         setChatroom(response.data);
 
         if (response.data.participants[0]._id === currentUser._id) {
@@ -82,36 +82,31 @@ export default function PrivateChatRoom() {
   }, [roomId]);
 
 
-
-  const fetchMessageOnScroll = async (pageNumber) => {
+ const fetchMessageOnScroll = async (pageNumber) => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/v1/private-chat/${roomId}?page=1&limit=20`);
-      if (res.data.messages.length < 20) {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}chatroom/messages/${roomId}?page=${pageNumber}&limit=20`);
+      if(res.data.messages<20){
         setHasMore(false);
-        return;
       }
-      setMessages((prev) => [...response.data.messages, ...prev]);
+      setMessages((prev) => [...res.data.messages, ...prev]);
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error.response?.data?.message || "Error fetching messages");
     }
-
-  }
-
+  };
 
   useEffect(() => {
     fetchMessageOnScroll(1);
   }, [roomId]);
 
-
   const handleScroll = (e) => {
     if (e.target.scrollTop === 0 && hasMore) {
       const nextPage = page + 1;
       setPage(nextPage);
+      
       fetchMessageOnScroll(nextPage);
     }
   };
-
-
+console.log("page:", page);
   // Auto-scroll to the latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -136,7 +131,7 @@ export default function PrivateChatRoom() {
     console.log(formData);
 
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/upload", formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -185,8 +180,7 @@ export default function PrivateChatRoom() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        //onst response = await axios.get(http://localhost:3000/api/v1///${roomId});
-        // setMessages(response.data);
+       
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -206,7 +200,7 @@ export default function PrivateChatRoom() {
         <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
           {messages.map((msg, index) => (
             <div key={index} className={msg.sender === me._id ? "flex justify-end" : ""}>
-              {console.log(msg)}
+          
               <div
                 className={`mb-4 ${
                   msg.sender === me._id
