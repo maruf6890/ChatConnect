@@ -1,4 +1,4 @@
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../Components/AuthProvider";
 import axios from "axios";
@@ -9,34 +9,27 @@ export default function Registration() {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const data = {
       name: e.target.name.value,
       email: e.target.email.value,
       password: e.target.password.value,
     };
 
- 
-   
-
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/registration`, data);
+      setResponseMessage("Registration successful!");
+      // You can also call register() here if it's part of the AuthContext.
+    } catch (error) {
+      setResponseMessage("Error during registration. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/`);
-        setDummyData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setDummyData("Error fetching data");
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  console.log("Dummy Data:", dummyData);
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -69,10 +62,15 @@ export default function Registration() {
             margin="normal"
             required
           />
-          <Button variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} type="submit">
-            Sign Up
+          <Button variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }} type="submit" disabled={loading}>
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
           </Button>
         </form>
+        {responseMessage && (
+          <Typography sx={{ textAlign: "center", marginTop: 2, color: loading ? "black" : "red" }}>
+            {responseMessage}
+          </Typography>
+        )}
       </Box>
     </div>
   );

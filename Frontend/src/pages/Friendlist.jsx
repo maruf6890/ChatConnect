@@ -1,19 +1,47 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Avatar, Button, Card, CardContent, Typography } from "@mui/material";
+import { useFormAction } from "react-router";
+import axios from "axios";
+import AuthContext from "../Components/AuthProvider";
 
 const FriendList = () => {
   // Dummy Friend Data
-  const [friends, setFriends] = useState([
-    { _id: "1", name: "John Doe", email: "john@example.com", avatar: "https://i.pravatar.cc/100?img=1" },
-    { _id: "2", name: "Jane Smith", email: "jane@example.com", avatar: "https://i.pravatar.cc/100?img=2" },
-    { _id: "3", name: "Michael Brown", email: "michael@example.com", avatar: "https://i.pravatar.cc/100?img=3" },
-    { _id: "4", name: "Emily Davis", email: "emily@example.com", avatar: "https://i.pravatar.cc/100?img=4" },
-  ]);
-
+  const [friends, setFriends] = useState([]);
+  const {currentUser}= useContext(AuthContext);
   // Unfriend Function
   const handleUnfriend = (friendId) => {
+    const updateUser = async () => {
+        try {
+          const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/remove`, { userId: currentUser?._id, friendId }, { withCredentials: true });
+          alert(res.data.message);
+      } catch (error) {
+          alert(error.response.data.message);
+      }
+      
+     };
+     updateUser();
     setFriends(friends.filter((friend) => friend._id !== friendId));
   };
+
+
+  useEffect(() => {
+    const fetchFriend = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}user/friend-list`,
+          { withCredentials: true }
+        );
+        setFriends(response.data)
+      } catch (error) {
+        console.error("Error fetching friends:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFriend();
+  }, []);
+
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl ">

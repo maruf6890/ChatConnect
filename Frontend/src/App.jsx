@@ -3,25 +3,32 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { deepOrange } from '@mui/material/colors';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Typography, TextField, Button, Avatar, IconButton, Tooltip } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet,Link, useNavigate, useParams, useLocation } from 'react-router';
 import './App.css';
 import AuthContext from './Components/AuthProvider';
 import axios from 'axios';
+import { decryptData } from './pages/Utils/Encription';
 
 function App() {
   const { currentUser } = useContext(AuthContext);
+  const {searchQu, setSearchQu}= useState('');
   const navigate = useNavigate();
-
+  const {roomId}=useParams();
+  
+  const [oldChat,setOldChat]= useState([]);
+  const [tempChat,setTempChat]= useState([]);
+  const [debounceTimeout, setDebounceTimeout] = useState(0);
+ 
   if (!currentUser) navigate('/login');
 
   const handleLogout = async () => {
-    console.log(import.meta.env.VITE_API_BASE_URL);
+   
     try {
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/logout`, {}, { withCredentials: true });
       console.log("Logged out");
@@ -31,6 +38,55 @@ function App() {
     }
   };
 
+  const handleSearchChat= (e) =>{
+
+    setDebounceTimeout(5000);
+    const searchOldMessages = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}chatroom/search?query=${encodeURIComponent(e.target.value)}`,
+          { withCredentials: true }
+        );
+        console.log(response.data.history);
+        setTempChat(oldChat);
+        setOldChat(response.data.history);
+        
+        
+      } catch (error) {
+        console.log('Error fetching old messages:', error);
+      }
+    }
+    searchOldMessages();
+
+  }
+  
+  if(debounceTimeout>0){
+    setTimeout(()=>{
+     setOldChat(tempChat);
+    
+      setDebounceTimeout(0);
+    },debounceTimeout)
+  }
+  
+  
+  useEffect(() => {
+    const handleFetchingData = async () => {
+      try {
+        const data = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}chatroom/old`,
+          { withCredentials: true }
+        );
+        setOldChat(data.data.history);
+       
+      } catch (error) {
+        // Handle errors, but currently it's empty
+      }
+    };
+    handleFetchingData(); // Call the function to fetch data
+  }, [currentUser]); //
+
+
+  
   return (
     <div className="flex h-screen w-screen flex-col md:flex-row">
       {/* Sidebar Menu with Icons Only */}
@@ -41,7 +97,7 @@ function App() {
               <Avatar
                 src={currentUser.profilePicture}
                 className="inline"
-                sx={{ height: "32px", width: "32px", bgcolor: deepOrange[500] }}
+                sx={{ height: "32px", width: "32px",  }}
                 alt={currentUser?.name}
               />
             </IconButton>
@@ -78,9 +134,11 @@ function App() {
           <div className="mt-5">
             <TextField
               fullWidth
+              name='chat'
               variant="outlined"
               placeholder="Search Chat..."
               size="small"
+              onChange={handleSearchChat}
               className="mb-4"
             />
           </div>
@@ -89,15 +147,35 @@ function App() {
             Chats History
           </Typography>
 
-          {["John Doe", "Jane Smith", "Alice Johnson"].map((contact) => (
-            <li
-              key={contact}
-              className="p-2 rounded hover:bg-gray-200 cursor-pointer"
-              onClick={() => navigate(`/chat/${contact}`)}
-            >
-              {contact}
-            </li>
-          ))}
+          {oldChat.map((contact) => (
+  <Link
+    key={contact._id}
+    to={`/app/private-chat/${contact._id}`}
+    className="p-2 rounded hover:bg-gray-200 cursor-pointer block"
+  >
+    <div className="card flex gap-2 items-center">
+      <Avatar
+        src={(contact.participants[0].email === currentUser.email) ? contact.participants[1].profilePicture : contact.participants[0].profilePicture}
+        className="inline"
+        sx={{ height: "40px", width: "40px",  }}
+        alt={(contact.participants[0].email === currentUser.email) ? contact.participants[1].name : contact.participants[0].name}
+      />
+      <div>
+        <p className="font-semibold">
+          {(contact.participants[0].email === currentUser.email) ? contact.participants[1].name : contact.participants[0].name}
+        </p>
+        <p className="text-sm text-gray-500">
+          {(contact.participants[0].email === currentUser.email) ? contact.participants[1].email : contact.participants[0].email}
+        </p>
+        <p className="text-xs text-gray-500">
+        
+        {roomId? roomId===contact._id? 'Chatting...' : (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20) :  (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20)}
+        </p>
+
+      </div>
+    </div>
+  </Link>
+))}
         </ul>
       </div>
       {/* Main Chat Window */}

@@ -27,6 +27,7 @@ export default function PrivateChatRoom() {
   const [other, setOther] = useState({});
   const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef(null); // Auto-scroll reference
+  const [loading,setLoading]= useState(false);
 
   // Hidden File Input
   const VisuallyHiddenInput = styled("input")({
@@ -43,6 +44,7 @@ export default function PrivateChatRoom() {
 
   // Fetch chatroom data
   useEffect(() => {
+
     const joinRoom = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}chatroom/${roomId}`);
@@ -83,14 +85,21 @@ export default function PrivateChatRoom() {
 
 
  const fetchMessageOnScroll = async (pageNumber) => {
+    setMessage([]);
     try {
+      setLoading(true);
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}chatroom/messages/${roomId}?page=${pageNumber}&limit=20`);
       if(res.data.messages<20){
         setHasMore(false);
       }
-      setMessages((prev) => [...res.data.messages, ...prev]);
+      res.data.messages.reverse();
+    
+      setMessages(res.data.messages);
     } catch (error) {
+      setLoading(false);
       alert(error.response?.data?.message || "Error fetching messages");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -187,6 +196,9 @@ console.log("page:", page);
     };
     fetchMessages();
   }, [])
+  if (loading) {
+    return <div className="w-full h-screen">Loading...</div>; 
+  }
   return (
  
       <div className="flex flex-col w-full flex-1">

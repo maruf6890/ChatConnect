@@ -11,7 +11,7 @@ const ChatHomePage = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-semibold text-blue-800">ChatApp for Web</h1>
+        <h1 className="text-2xl font-semibold text-blue-800">ChatConnect for Web</h1>
 
         {/* Subtitle */}
         <p className="text-blue-600 mt-4">

@@ -15,6 +15,7 @@ import {
   unBlockUser,
   updateAvatar,
   updateProfile,
+  getFriendList,
  
 } from "../controllers/user.controller.js";
 import { verifyAuth } from "../Middlewares/auth.middlewares.js";
@@ -36,7 +37,7 @@ router.post('/block',verifyAuth, blockUser);
 router.post('/unblock',verifyAuth, unBlockUser);
 router.post('/update-avatar',verifyAuth, updateAvatar);
 router.patch('/update-profile',verifyAuth, updateProfile);
-
+router.get('/friend-list',verifyAuth,getFriendList);
 // Route to get a single user by ID
 //router.get('/:userId',verifyAuth, getUserById);
 

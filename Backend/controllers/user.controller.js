@@ -464,4 +464,21 @@ const updateProfile = async (req, res) => {
   }
 };
 
-export { createUser,updateAvatar, updateProfile, addFriend, unfriend, blockUser, unBlockUser, loginUser, searchUser,  logoutUser, getAllUsers, getUserById, updateUserById,getCurrentuser, deleteUserById };
+const getFriendList = async (req, res) => {
+  try {
+    // Check if user exists and get friends list
+    const user = await User.findById(req.user.id).select('friends').populate('friends', 'name email friends profilePicture');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user.friends); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+export { createUser,updateAvatar,getFriendList, updateProfile, addFriend, unfriend, blockUser, unBlockUser, loginUser, searchUser,  logoutUser, getAllUsers, getUserById, updateUserById,getCurrentuser, deleteUserById };

@@ -9,6 +9,7 @@ import upload from "./routes/upload.routes.js"
 import { Server } from "socket.io";
 import Message from "./models/message.models.js";
 import http from "http";
+import ChatRoom from "./models/chatroom.models.js";
 
 dotenv.config();
 const app = express();
@@ -53,6 +54,11 @@ io.on("connection", (socket) => {
         sender: senderId,
         messageType: type,
       });
+
+      //update room details
+      await ChatRoom.findByIdAndUpdate(roomId,{lastMessage:message || "one image shared"});
+      
+
 
       io.to(roomId).emit("receiveMessage", {
         id: savedMessage._id,

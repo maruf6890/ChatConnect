@@ -40,18 +40,20 @@ const ChatRoomSchema = new mongoose.Schema(
       ],
     },
     lastMessage: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Message", // Reference to the last message in the chat
+     type: String,
     },
   },
   { timestamps: true }
 );
 
-// Unique index for private chatrooms to prevent duplication
-ChatRoomSchema.index(
-  { type: 1, participants: 1 },
-  { unique: true, partialFilterExpression: { type: "private" } }
-);
+// Pre-save hook to ensure participants are always sorted
+ChatRoomSchema.pre('save', function (next) {
+  if (this.type === "private") {
+    this.participants.sort((a, b) => a.toString().localeCompare(b.toString()));
+  }
+  next();
+});
+
 
 const ChatRoom = mongoose.model("ChatRoom", ChatRoomSchema);
 
