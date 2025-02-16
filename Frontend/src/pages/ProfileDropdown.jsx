@@ -140,7 +140,7 @@ const ProfileDropdown = ({ other, user }) => {
                         maxHeight: "50vh",
                         overflow: "auto",
                         border: "1px solid #ccc",
-                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Adjusted shadow
+                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", 
                         borderRadius: "8px",
                     },
                 }}

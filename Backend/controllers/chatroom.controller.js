@@ -34,11 +34,11 @@ const joinChatRoom = async (req, res) => {
       // Check if the private chatroom already exists with the sorted participants
       const existingChatRoom = await ChatRoom.findOne({
         type: "private",
-        participants: { $all: participants, $size: 2 },  // Ensures exactly two participants, in any order
+        participants: { $all: participants, $size: 2 },  
       });
   
       if (!existingChatRoom) {
-        // If the chatroom doesn't exist, create a new one
+       
         const newChatRoom = new ChatRoom({
           type: "private",
           participants: participants,
@@ -106,7 +106,7 @@ const getOldMessage = async (req, res) => {
         .limit(Number(limit))
         .lean();
   
-      res.json({ messages }); // No need to reverse
+      res.json({ messages });
     } catch (error) {
       console.error("Error fetching messages:", error);
       res.status(500).json({ message: "Error fetching messages", error });
@@ -116,7 +116,7 @@ const getOldMessage = async (req, res) => {
 
 
 
-  //get last 10 history
+  //get last 5 history
 
   const getMessageHistory = async (req, res) => {
     console.log(req.user.id);

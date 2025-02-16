@@ -21,7 +21,7 @@ export default function Registration() {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/registration`, data);
       setResponseMessage("Registration successful!");
-      // You can also call register() here if it's part of the AuthContext.
+
     } catch (error) {
       setResponseMessage("Error during registration. Please try again.");
     } finally {

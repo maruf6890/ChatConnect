@@ -92,8 +92,8 @@ function App() {
         
       }
     };
-    handleFetchingData(); // Call the function to fetch data
-  }, [currentUser]); //
+    handleFetchingData(); 
+  }, [currentUser]); 
 
 
   
