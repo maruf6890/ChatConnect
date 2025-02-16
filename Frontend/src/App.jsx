@@ -17,7 +17,7 @@ import { decryptData } from './pages/Utils/Encription';
 
 function App() {
   const { currentUser } = useContext(AuthContext);
-  const {searchQu, setSearchQu}= useState('');
+  const [searchQu, setSearchQu]= useState("");
   const navigate = useNavigate();
   const {roomId}=useParams();
   
@@ -38,36 +38,46 @@ function App() {
     }
   };
 
-  const handleSearchChat= (e) =>{
-
-    setDebounceTimeout(5000);
-    const searchOldMessages = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}chatroom/search?query=${encodeURIComponent(e.target.value)}`,
-          { withCredentials: true }
-        );
-        console.log(response.data.history);
-        setTempChat(oldChat);
-        setOldChat(response.data.history);
-        
-        
-      } catch (error) {
-        console.log('Error fetching old messages:', error);
-      }
+  const handleSearchChat = (e) => {
+    const value = e.target.value;
+    setSearchQu(value);
+  
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
     }
-    searchOldMessages();
+  
+    if (value === "") {
+      setOldChat(tempChat); 
+    } else {
+      if (tempChat.length === 0) {
+        setTempChat(oldChat); 
+      }
+  
+      const newTimeout = setTimeout(async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}chatroom/search?query=${encodeURIComponent(value)}`,
+            { withCredentials: true }
+          );
+          setOldChat(response.data.history);
+        } catch (error) {
+          console.log("Error fetching old messages:", error);
+        }
+      }, 500);
+  
+      setDebounceTimeout(newTimeout);
+    }
+  };
+  
+ 
+  useEffect(() => {
+    return () => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+    };
+  }, [debounceTimeout]);
 
-  }
-  
-  if(debounceTimeout>0){
-    setTimeout(()=>{
-     setOldChat(tempChat);
-    
-      setDebounceTimeout(0);
-    },debounceTimeout)
-  }
-  
   
   useEffect(() => {
     const handleFetchingData = async () => {
@@ -79,7 +89,7 @@ function App() {
         setOldChat(data.data.history);
        
       } catch (error) {
-        // Handle errors, but currently it's empty
+        
       }
     };
     handleFetchingData(); // Call the function to fetch data
@@ -95,7 +105,7 @@ function App() {
           <Tooltip title={currentUser?.name} placement="right">
             <IconButton onClick={() => navigate('/app/profile')}>
               <Avatar
-                src={currentUser.profilePicture}
+                src={currentUser?.profilePicture}
                 className="inline"
                 sx={{ height: "32px", width: "32px",  }}
                 alt={currentUser?.name}
@@ -155,22 +165,23 @@ function App() {
   >
     <div className="card flex gap-2 items-center">
       <Avatar
-        src={(contact.participants[0].email === currentUser.email) ? contact.participants[1].profilePicture : contact.participants[0].profilePicture}
+        src={(contact.participants[0].email === currentUser?.email) ? contact.participants[1].profilePicture : contact.participants[0].profilePicture}
         className="inline"
         sx={{ height: "40px", width: "40px",  }}
-        alt={(contact.participants[0].email === currentUser.email) ? contact.participants[1].name : contact.participants[0].name}
+        alt={(contact.participants[0].email === currentUser?.email) ? contact.participants[1].name : contact.participants[0].name}
+      
       />
       <div>
         <p className="font-semibold">
-          {(contact.participants[0].email === currentUser.email) ? contact.participants[1].name : contact.participants[0].name}
+          {(contact.participants[0].email === currentUser?.email) ? contact.participants[1].name : contact.participants[0].name}
         </p>
         <p className="text-sm text-gray-500">
-          {(contact.participants[0].email === currentUser.email) ? contact.participants[1].email : contact.participants[0].email}
+          {(contact.participants[0].email === currentUser?.email) ? contact.participants[1].email : contact.participants[0].email}
         </p>
         <p className="text-xs text-gray-500">
+             {/*roomId? roomId===contact._id? 'Chatting...' : (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20) :  (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20)*/}
         
-        {roomId? roomId===contact._id? 'Chatting...' : (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20) :  (decryptData(contact.lastMessage).length>20)?decryptData(contact.lastMessage).slice(0,20)+'...':decryptData(contact.lastMessage).slice(0,20)}
-        </p>
+       </p>
 
       </div>
     </div>

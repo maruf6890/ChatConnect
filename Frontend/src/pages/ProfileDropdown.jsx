@@ -1,16 +1,31 @@
 import { useContext, useEffect, useState } from "react";
-import { Avatar, Button, Menu, MenuItem, Divider } from "@mui/material";
+import { Avatar,Snackbar,Alert, Button, Menu, MenuItem, Divider } from "@mui/material";
 import { PersonAdd, PersonRemove, Block, CheckCircle } from "@mui/icons-material";
 import AuthContext from "../Components/AuthProvider";
 import axios from "axios";
 
 
 const ProfileDropdown = ({ other, user }) => {
+    const [openAlert,setOpenAlert]= useState(false);
+    const [openAlert2,setOpenAlert2]= useState(false);
     const { currentUser } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [isFriend, setIsFriend] = useState(false);
     const [isBlocked, setIsBlocked] = useState(currentUser?.blockedUsers.includes(other?._id)|| false);
-
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpenAlert(false);
+      };
+      const handleCloseAlert2 = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpenAlert2(false);
+      };
     const open = Boolean(anchorEl);
 
     const handleClick = (event) => setAnchorEl(event.currentTarget);
@@ -23,7 +38,7 @@ const ProfileDropdown = ({ other, user }) => {
             const updateUser = async () => {
                 try {
                     const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/remove`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
-                    alert(res.data.message);
+                    setOpenAlert(true);
                     setIsFriend(!isFriend);
                 } catch (error) {
                     alert(error.response.data.message);
@@ -40,7 +55,7 @@ const ProfileDropdown = ({ other, user }) => {
             const updateUser = async () => {
                 try {
                     const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}user/add`, { userId: currentUser?._id, friendId: other?._id }, { withCredentials: true });
-                    alert(res.data.message);
+                    setOpenAlert2(true);
                     setIsFriend(!isFriend);
                 } catch (error) {
                     alert(error.response.data.message);
@@ -175,6 +190,26 @@ const ProfileDropdown = ({ other, user }) => {
                     <span>{isBlocked ? "Unblock User" : "Block User"}</span>
                 </MenuItem>
             </Menu>
+            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+                    <Alert
+                      onClose={handleCloseAlert}
+                      severity="success"
+                      variant="filled"
+                      sx={{ width: '100%' }}
+                    >
+                      You are no longer friend with him/her
+                    </Alert>
+                  </Snackbar>
+                  <Snackbar open={openAlert2} autoHideDuration={6000} onClose={handleCloseAlert2}>
+                    <Alert
+                      onClose={handleCloseAlert2}
+                      severity="success"
+                      variant="filled"
+                      sx={{ width: '100%' }}
+                    >
+                      You are now friends with him/her
+                    </Alert>
+                  </Snackbar>
         </div>
     );
 };

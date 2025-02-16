@@ -24,19 +24,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- 
+  // Fetch the current user on initial load
   useEffect(() => {
     updateCurrentUser();
   }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser, updateCurrentUser }}>
-      {!loading ? children : <div>Loading...</div>} 
+      {!loading ? children : <div>Loading...</div>} {/* Show a loading indicator */}
     </AuthContext.Provider>
   );
 };
 
-
+// Custom Hook for AuthContext
 export const useAuth = () => React.useContext(AuthContext);
 
 export default AuthContext;

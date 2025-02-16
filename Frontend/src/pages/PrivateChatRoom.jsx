@@ -11,7 +11,7 @@ import AttachmentIcon from "@mui/icons-material/Attachment";
 import { styled } from "@mui/material/styles";
 import { decryptData, encryptData } from "./Utils/Encription";
 import ProfileDropdown from "./ProfileDropdown";
-
+import SendIcon from '@mui/icons-material/Send';
 // Initialize Socket.IO
 const socket = io(`${import.meta.env.VITE_BACKEND}`, { autoConnect: false });
 
@@ -209,7 +209,7 @@ console.log("page:", page);
         </div>
   
         {/* Chat Messages */}
-        <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+        <div className="flex-1 min-h-screen p-4 overflow-y-auto bg-gray-50">
           {messages.map((msg, index) => (
             <div key={index} className={msg.sender === me._id ? "flex justify-end" : ""}>
           
@@ -225,7 +225,7 @@ console.log("page:", page);
                 </Typography>
   
                 {msg.messageType === "image" ? (
-                  <img src={decryptData(msg.content)} alt="Uploaded" className="rounded-lg max-w-xs mt-2" />
+                 <div className="flex justify-center">  <img src={decryptData(msg.content)} alt="Uploaded" className="rounded-lg text-center max-w-xs mt-2" /></div>
                 ) : (
                   <Typography variant="body1">{decryptData(msg.content)}</Typography>
                 )}
@@ -236,10 +236,11 @@ console.log("page:", page);
         </div>
   
         {/* Message Input */}
-        <div className="flex items-center p-4 border-t border-gray-300 bg-white">
+       <div className="">
+       <div className="flex items-center p-4 border-t border-gray-300 bg-white">
           {/* Image Upload */}
-          <Button variant="contained" color="primary" component="label" disabled={uploading}>
-            {uploading ? <CircularProgress size={20} color="inherit" /> : <AttachmentIcon />}
+          <Button variant="contained" color="" sx={{marginRight:'5px'}} component="label" disabled={uploading}>
+            {uploading ? <CircularProgress size={20} color="inherit" /> : <AttachmentIcon color="primary"></AttachmentIcon>}
             <VisuallyHiddenInput type="file" accept="image/*" onChange={handleFileChange} />
           </Button>
   
@@ -255,10 +256,11 @@ console.log("page:", page);
           />
   
           {/* Send Button */}
-          <Button variant="contained" color="primary" onClick={sendMessage}>
-            Send
+          <Button variant="contained" sx={{marginLeft:'5px'}} color="" onClick={sendMessage}>
+            <SendIcon  color="primary"></SendIcon>
           </Button>
         </div>
+       </div>
       </div>
     );
 }  

@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setCurrentUser } = useContext(AuthContext); // To set user context globally
+  const { setCurrentUser,updateCurrentUser } = useContext(AuthContext); // To set user context globally
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
 
@@ -33,7 +33,7 @@ export default function Login() {
 
         // Update the user context
         setCurrentUser(user);
-
+        updateCurrentUser();
         navigate("/app");
       }
 
